@@ -3,12 +3,12 @@ const cors = require("cors");
 require("dotenv").config();
 
 // Import database connection
-const connectDB = require("./config/db");
+const connectDB = require("./api/Config/db");
 
 // Import routes
-const authRoutes = require("./routes/auth");
-const userRoutes = require("./routes/users");
-const tweetRoutes = require("./routes/tweets");
+const authRoutes = require("./api/Routes/auth");
+const userRoutes = require("./api/Routes/user");
+const tweetRoutes = require("./api/Routes/tweet");
 
 // Initialize app
 const app = express();
@@ -22,7 +22,7 @@ app.use(cors());
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
+// app.use("/api/users");
 app.use("/api/tweets", tweetRoutes);
 
 // Error handling middleware

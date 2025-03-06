@@ -211,3 +211,121 @@ exports.getTweetReplies = async (req, res) => {
 };
 
 // Like/Unlike a tweet
+exports.likeTweet = async (req, res) => {
+  try {
+    const tweet = await Tweet.findById(req.params.id);
+
+    if (!tweet) {
+      return res.status(404).json({ message: "Tweet not found" });
+    }
+
+    // Check if user already liked the tweet
+    const isLiked = tweet.likes.includes(req.user.id);
+
+    if (isLiked) {
+      // Unlike the tweet
+      await Tweet.findByIdAndUpdate(req.params.id, {
+        $pull: { likes: req.user.id },
+      });
+      res.status(200).json({ message: "Tweet unliked" });
+    } else {
+      // Like the tweet
+      await Tweet.findByIdAndUpdate(req.params.id, {
+        $push: { likes: req.user.id },
+      });
+      res.status(200).json({ message: "Tweet liked" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Retweet/Unretweet a tweet
+exports.retweetTweet = async (req, res) => {
+  try {
+    const tweet = await Tweet.findById(req.params.id);
+
+    if (!tweet) {
+      return res.status(404).json({ message: "Tweet not found" });
+    }
+
+    // Check if user already retweeted the tweet
+    const isRetweeted = tweet.retweets.includes(req.user.id);
+
+    if (isRetweeted) {
+      // Unretweet
+      await Tweet.findByIdAndUpdate(req.params.id, {
+        $pull: { retweets: req.user.id },
+      });
+      res.status(200).json({ message: "Tweet unretweeted" });
+    } else {
+      // Retweet
+      await Tweet.findByIdAndUpdate(req.params.id, {
+        $push: { retweets: req.user.id },
+      });
+      res.status(200).json({ message: "Tweet retweeted" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Add comment to a tweet
+exports.addComment = async (req, res) => {
+  try {
+    const { content } = req.body;
+
+    if (!content) {
+      return res.status(400).json({ message: "Comment content is required" });
+    }
+
+    const tweet = await Tweet.findById(req.params.id);
+
+    if (!tweet) {
+      return res.status(404).json({ message: "Tweet not found" });
+    }
+
+    const comment = {
+      user: req.user.id,
+      content,
+    };
+
+    const updatedTweet = await Tweet.findByIdAndUpdate(
+      req.params.id,
+      { $push: { comments: comment } },
+      { new: true }
+    ).populate("comments.user", "username profilePicture");
+
+    res
+      .status(200)
+      .json(updatedTweet.comments[updatedTweet.comments.length - 1]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Search tweets
+exports.searchTweets = async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q) {
+      return res.status(400).json({ message: "Query parameter is required" });
+    }
+
+    const tweets = await Tweet.find({
+      content: { $regex: q, $options: "i" },
+    })
+      .populate("user", "username profilePicture")
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    res.status(200).json(tweets);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
