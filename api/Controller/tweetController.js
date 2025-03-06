@@ -1,10 +1,12 @@
 const Tweet = require("../Models/Tweet");
 const User = require("../Models/User");
+const { formatTweetContent } = require("../utils.js/helper");
 
 // Create a new tweet
 exports.createTweet = async (req, res) => {
   try {
     const { content, media, quoteTweetId, inReplyToTweetId } = req.body;
+    const formattedContent = formatTweetContent(content);
 
     if (!content && (!media || media.length === 0)) {
       return res
