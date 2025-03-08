@@ -27,7 +27,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 app.use("/api/auth", authRoutes);
-// app.use("/api/users");
+app.use("/api/users", userRoutes);
 app.use("/api/tweets", tweetRoutes);
 
 // Error handling middleware
