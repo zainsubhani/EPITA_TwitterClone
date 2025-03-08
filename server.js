@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger.json");
+const swaggerDocument = require("./SwaggerApi.json");
 
 // Import database connection
 const connectDB = require("./api/Config/db");
@@ -11,6 +11,8 @@ const connectDB = require("./api/Config/db");
 const authRoutes = require("./api/Routes/auth");
 const userRoutes = require("./api/Routes/user");
 const tweetRoutes = require("./api/Routes/tweet");
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Initialize app
 const app = express();
