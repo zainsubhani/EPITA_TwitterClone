@@ -2,6 +2,16 @@ const Tweet = require("../Models/Tweet");
 const User = require("../Models/User");
 const { formatTweetContent } = require("../utils.js/helper");
 
+// Function to extract hashtags from the text
+const extractHashtags = (text) => {
+  return text ? text.match(/#\w+/g) || [] : [];
+};
+
+// Function to extract mentions from the text
+const extractMentions = (text) => {
+  return text ? text.match(/@\w+/g) || [] : [];
+};
+
 // Create a new tweet
 exports.createTweet = async (req, res) => {
   try {
@@ -14,10 +24,16 @@ exports.createTweet = async (req, res) => {
         .json({ message: "Tweet must have content or media" });
     }
 
+    // Extract hashtags and mentions
+    const hashtags = extractHashtags(content);
+    const mentions = extractMentions(content);
+
     const newTweet = new Tweet({
       user: req.user.id,
       content: content || "",
       media: media || [],
+      hashtags,
+      mentions,
     });
 
     // Handle quote tweet
@@ -60,6 +76,7 @@ exports.createTweet = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // Get tweet by ID
 exports.getTweetById = async (req, res) => {
