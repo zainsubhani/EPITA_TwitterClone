@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    ports:
+      - "2000:2000"
+    environment:
+      - PORT=2000
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/twitter-clone
+      - JWT_SECRET=your_jwt_secret_key_here
+      - REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
+    depends_on:
+      - mongo
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
