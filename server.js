@@ -18,6 +18,8 @@ const app = express();
 // Connect to database
 connectDB();
 
+
+
 // Middleware
 app.use(express.json());
 app.use(cors());

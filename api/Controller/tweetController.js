@@ -104,7 +104,8 @@ exports.deleteTweet = async (req, res) => {
         .json({ message: "Not authorized to delete this tweet" });
     }
 
-    await tweet.remove();
+    // Instead of tweet.remove(), use findByIdAndDelete
+    await Tweet.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: "Tweet deleted successfully" });
   } catch (err) {
