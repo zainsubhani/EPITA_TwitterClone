@@ -12,8 +12,6 @@ const authRoutes = require("./api/Routes/auth");
 const userRoutes = require("./api/Routes/user");
 const tweetRoutes = require("./api/Routes/tweet");
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 // Initialize app
 const app = express();
 
@@ -23,6 +21,9 @@ connectDB();
 // Middleware
 app.use(express.json());
 app.use(cors());
+
+// Swagger documentation route
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 app.use("/api/auth", authRoutes);
